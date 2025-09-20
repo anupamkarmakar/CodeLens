@@ -84,7 +84,16 @@ async function generateText(prompt) {
     `
     });
     console.log('AI Response received');
-    return response.text;
+    
+    let formattedResponse = response.text;
+    
+    if (formattedResponse && !formattedResponse.includes('##')) {
+      formattedResponse = `## 🔍 Code Review Results\n\n${formattedResponse}`;
+    }
+    
+    formattedResponse += `\n\n---\n\n💡 **Pro Tip**: Implement these suggestions incrementally and test thoroughly after each change. Happy coding! 🚀`;
+    
+    return formattedResponse;
   } catch (error) {
     console.error('AI Service Error:', error);
     throw error;

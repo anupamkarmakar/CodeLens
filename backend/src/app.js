@@ -1,13 +1,15 @@
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./config/database');
 const aiRoute = require('./routes/ai.routes');
+const authRoute = require('./routes/auth.routes');
+
+connectDB();
 
 const app = express();
 
-// Enable CORS for all origins (in production, you'd want to restrict this)
 app.use(cors());
 
-// Middleware to parse JSON bodies
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -15,6 +17,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/ai', aiRoute);
+app.use('/auth', authRoute);
 
 module.exports = app;
 
