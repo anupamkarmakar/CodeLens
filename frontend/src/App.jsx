@@ -9,20 +9,35 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [ count, setCount ] = useState(0)
   const [ code, setCode ] = useState(` function sum() {
   return 1 + 1
 }`)
 
   const [ review, setReview ] = useState(``)
+  const [ loading, setLoading ] = useState(false)
+  const [ error, setError ] = useState('')
 
   useEffect(() => {
     prism.highlightAll()
   }, [])
 
   async function reviewCode() {
-    const response = await axios.post('http://localhost:3000/ai/get-review', { code })
-    setReview(response.data)
+    try {
+      setLoading(true)
+      setError('')
+      setReview('')
+      
+      console.log('Sending request to backend...')
+      const response = await axios.post('http://localhost:3000/ai/get-response', { prompt: code })
+      console.log('Response received:', response.data)
+      
+      setReview(response.data.review || response.data)
+    } catch (error) {
+      console.error('Error reviewing code:', error)
+      setError(`Failed to get code review: ${error.message}`)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -47,9 +62,18 @@ function App() {
           </div>
           <div
             onClick={reviewCode}
-            className="review">Review</div>
+            className="review"
+            style={{ opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
+          >
+            {loading ? 'Reviewing...' : 'Review'}
+          </div>
         </div>
         <div className="right">
+          {error && (
+            <div style={{ color: 'red', padding: '10px', marginBottom: '10px' }}>
+              {error}
+            </div>
+          )}
           <Markdown
 
             rehypePlugins={[ rehypeHighlight ]}
