@@ -44,6 +44,9 @@ function AuthModal({ isOpen, onClose, mode, onSwitchMode, onAuthSuccess }) {
           lastCode: data.lastCode || ''
         }))
         
+        // Trigger custom event for same-tab synchronization
+        window.dispatchEvent(new CustomEvent('userAuthenticated'))
+        
         onAuthSuccess(data)
         onClose()
       } else {

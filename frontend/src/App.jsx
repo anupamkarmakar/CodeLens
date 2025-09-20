@@ -17,6 +17,15 @@ const getUserFromStorage = () => {
     
     const parsedUser = JSON.parse(userData)
     console.log('Getting user from storage:', parsedUser)
+    
+    // Ensure the user object has all required fields
+    if (!parsedUser._id || !parsedUser.name || !parsedUser.email) {
+      console.error('Invalid user data in storage:', parsedUser)
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      return null
+    }
+    
     return parsedUser
   } catch (error) {
     console.error('Error getting user from storage:', error)
@@ -58,8 +67,24 @@ function App() {
 }`)
     }
     
-
     setIsLoadingAuth(false)
+    
+    // Force immediate sync to handle page transitions
+    const handleImmediateSync = () => {
+      const latestUser = getUserFromStorage()
+      if (latestUser && (!currentUser || latestUser._id !== currentUser._id)) {
+        console.log('Immediate sync - updating user:', latestUser._id)
+        setUser(latestUser)
+        if (latestUser.lastCode && latestUser.lastCode.trim()) {
+          setCode(latestUser.lastCode)
+        }
+      }
+    }
+    
+    // Run immediate sync after a short delay to catch any race conditions
+    const timeoutId = setTimeout(handleImmediateSync, 100)
+    
+    return () => clearTimeout(timeoutId)
   }, [])
 
 
@@ -91,10 +116,17 @@ function App() {
       }
     }
     
+    // Listen for localStorage changes from other tabs/windows
     window.addEventListener('storage', handleStorageChange)
+    
+    // Also listen for custom events for same-tab updates
+    window.addEventListener('userAuthenticated', handleStorageChange)
+    window.addEventListener('userLoggedOut', handleStorageChange)
     
     return () => {
       window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('userAuthenticated', handleStorageChange)
+      window.removeEventListener('userLoggedOut', handleStorageChange)
     }
   }, [user])
 
@@ -125,6 +157,9 @@ function App() {
     setReview('')
     setError('')
     setCurrentView('landing')
+    
+    // Trigger custom event for same-tab synchronization
+    window.dispatchEvent(new CustomEvent('userLoggedOut'))
   }
 
   useEffect(() => {

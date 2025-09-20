@@ -16,6 +16,27 @@ function LandingPage({ onGetStarted }) {
     if (token && userData) {
       setUser(JSON.parse(userData))
     }
+    
+    // Listen for authentication changes from other components
+    const handleAuthChange = () => {
+      const token = localStorage.getItem('token')
+      const userData = localStorage.getItem('user')
+      if (token && userData) {
+        setUser(JSON.parse(userData))
+      } else {
+        setUser(null)
+      }
+    }
+    
+    window.addEventListener('userAuthenticated', handleAuthChange)
+    window.addEventListener('userLoggedOut', handleAuthChange)
+    window.addEventListener('storage', handleAuthChange)
+    
+    return () => {
+      window.removeEventListener('userAuthenticated', handleAuthChange)
+      window.removeEventListener('userLoggedOut', handleAuthChange)
+      window.removeEventListener('storage', handleAuthChange)
+    }
   }, [])
 
   const handleEmailSubmit = (e) => {
@@ -56,6 +77,9 @@ function LandingPage({ onGetStarted }) {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
+    
+    // Trigger custom event for same-tab synchronization
+    window.dispatchEvent(new CustomEvent('userLoggedOut'))
   }
 
   const openAuthModal = (mode) => {
