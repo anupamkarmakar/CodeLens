@@ -16,7 +16,6 @@ const getUserFromStorage = () => {
     }
     
     const parsedUser = JSON.parse(userData)
-    console.log('Getting user from storage:', parsedUser)
     
     // Ensure the user object has all required fields
     if (!parsedUser._id || !parsedUser.name || !parsedUser.email) {
@@ -50,7 +49,6 @@ function App() {
 
   useEffect(() => {
     const currentUser = getUserFromStorage()
-    console.log('Initial load - User:', currentUser)
     
     if (currentUser) {
       setUser(currentUser)
@@ -73,7 +71,6 @@ function App() {
     const handleImmediateSync = () => {
       const latestUser = getUserFromStorage()
       if (latestUser && (!currentUser || latestUser._id !== currentUser._id)) {
-        console.log('Immediate sync - updating user:', latestUser._id)
         setUser(latestUser)
         if (latestUser.lastCode && latestUser.lastCode.trim()) {
           setCode(latestUser.lastCode)
@@ -91,26 +88,19 @@ function App() {
   useEffect(() => {
     const handleStorageChange = () => {
       const currentUser = getUserFromStorage()
-      console.log('Storage changed - User:', currentUser)
       
       if (currentUser && (!user || currentUser._id !== user._id)) {
-        console.log('User changed, loading their code:', currentUser._id)
         setUser(currentUser)
         if (currentUser.lastCode && currentUser.lastCode.trim()) {
           setCode(currentUser.lastCode)
         } else {
-          setCode(` function sum() {
-  return 1 + 1
-}`)
+          setCode(` function sum() { return 1 + 1 }`)
         }
         setReview('')
         setError('')
       } else if (!currentUser && user) {
-        console.log('User logged out')
         setUser(null)
-        setCode(` function sum() {
-  return 1 + 1
-}`)
+        setCode(` function sum() { return 1 + 1 }`)
         setReview('')
         setError('')
       }
@@ -132,7 +122,6 @@ function App() {
 
   useEffect(() => {
     if (user && user.lastCode && user.lastCode.trim() && user.lastCode !== code) {
-      console.log('User data updated, syncing code for user:', user._id)
       setCode(user.lastCode)
       setReview('')
       setError('')
@@ -227,8 +216,6 @@ function App() {
     return <LandingPage onGetStarted={handleGetStarted} />
   }
 
-  console.log('Rendering dashboard - User:', user, 'CurrentView:', currentView, 'IsLoadingAuth:', isLoadingAuth)
-
   return (
     <div className="app">
       <header className="app-header">
@@ -288,18 +275,7 @@ function App() {
                 <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                   <textarea
                     value={code}
-                    onChange={(e) => {
-                      console.log('Textarea onChange triggered:', e.target.value);
-                      setCode(e.target.value);
-                    }}
-                    onInput={(e) => {
-                      console.log('Textarea onInput triggered:', e.target.value);
-                    }}
-                    onKeyDown={(e) => {
-                      console.log('Key pressed:', e.key);
-                    }}
-                    onFocus={() => console.log('Textarea focused')}
-                    onBlur={() => console.log('Textarea blurred')}
+                    onChange={(e) => setCode(e.target.value)}
                     placeholder="Write your code here..."
                     className="code-editor"
                     autoComplete="off"

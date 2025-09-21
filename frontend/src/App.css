@@ -181,7 +181,6 @@ body,
   color: #dc2626;
 }
 
-/* Authentication Required Styles */
 .auth-required {
   display: flex;
   align-items: center;
@@ -562,7 +561,7 @@ body,
 
 /* Review section */
 .right {
-  background: white;
+  background: rgb(255, 255, 255);
   border-radius: 12px;
   padding: 1.5rem;
   border: 1px solid #e2e8f0;

@@ -17,7 +17,6 @@ function LandingPage({ onGetStarted }) {
       setUser(JSON.parse(userData))
     }
     
-    // Listen for authentication changes from other components
     const handleAuthChange = () => {
       const token = localStorage.getItem('token')
       const userData = localStorage.getItem('user')
@@ -53,12 +52,9 @@ function LandingPage({ onGetStarted }) {
   }
 
   const handleDashboardClick = () => {
-    console.log('Dashboard clicked - User:', user)
     if (user) {
-      console.log('User authenticated, going to dashboard')
       onGetStarted()
     } else {
-      console.log('User not authenticated, showing login modal')
       openAuthModal('login')
     }
   }
@@ -78,7 +74,6 @@ function LandingPage({ onGetStarted }) {
     localStorage.removeItem('user')
     setUser(null)
     
-    // Trigger custom event for same-tab synchronization
     window.dispatchEvent(new CustomEvent('userLoggedOut'))
   }
 
@@ -154,8 +149,8 @@ function LandingPage({ onGetStarted }) {
             </div>
             <div className="hero-stats">
               <div className="stat">
-                <span className="stat-number">10K+</span>
-                <span className="stat-label">Code Reviews</span>
+                <span className="stat-number">Support</span>
+                <span className="stat-label">All Language</span>
               </div>
               <div className="stat">
                 <span className="stat-number">99%</span>
