@@ -75,14 +75,6 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in the backend directory:
-
-```env
-MONGODB_URI=mongodb+srv://your-username:your-password@cluster0.xxxxx.mongodb.net/codelens?retryWrites=true&w=majority
-JWT_SECRET=your-super-secret-jwt-key
-GOOGLE_API_KEY=your-google-ai-api-key
-```
-
 Start the backend server:
 
 ```bash
